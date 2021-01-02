@@ -1,0 +1,15 @@
+{% block content %}
+  {% for alert in alerts %}
+    <article class="alert">
+      <header>
+        <div>
+          <h1>{{ alert['title'] }}</h1>
+          <div class="about">email {{alert['email']}} on {{ alert['schedule']}}</div>
+        </div>
+      </header>
+    </article>
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+{% endblock %}
