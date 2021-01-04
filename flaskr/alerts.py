@@ -106,3 +106,34 @@ def update(id):
         )
         db.commit()
         return redirect(url_for('alerts.index'))
+
+@bp.route('<int:id>/delete', methods=['POST'])
+@login_required
+def delete(id):
+    get_alert(id)
+    db = get_db()
+    db.execute('DELETE FROM alert WHERE id = ?', (id,))
+    db.commit()
+    return redirect(url_for('alerts.index'))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
