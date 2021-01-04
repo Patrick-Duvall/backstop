@@ -6,6 +6,7 @@
           <h1>{{ alert['title'] }}</h1>
           <div class="about">email {{alert['email']}} on {{ alert['schedule']}}</div>
         </div>
+        <a href="{{ url_for('alerts.edit', id=alert['id']) }}" class="button">Edit this alert</a>
       </header>
     </article>
     {% if not loop.last %}
