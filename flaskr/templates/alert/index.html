@@ -9,6 +9,9 @@
         <a href="{{ url_for('alerts.edit', id=alert['id']) }}" class="button">Edit this alert</a>
       </header>
     </article>
+    <form action="{{ url_for('alerts.delete', id=alert['id']) }}" method="post">
+      <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+    </form>
     {% if not loop.last %}
       <hr>
     {% endif %}
