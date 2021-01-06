@@ -1,14 +1,23 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}My Alerts{% endblock %}</h1>
+{% endblock %}
+
 {% block content %}
   {% for alert in alerts %}
     <article class="alert">
       <header>
         <div>
           <h1>{{ alert['title'] }}</h1>
-          <div class="about">email {{alert['email']}} on {{ alert['schedule']}}</div>
+          <div class="about">Send overdue alert to {{alert['email']}} at {{ alert['schedule']}}</div>
         </div>
-        <a href="{{ url_for('alerts.edit', id=alert['id']) }}" class="button">Edit this alert</a>
       </header>
     </article>
+    </br>
+    <form action="{{ url_for('alerts.edit', id=alert['id']) }}">
+      <input type="submit" value="Edit">
+    </form>
     <form action="{{ url_for('alerts.delete', id=alert['id']) }}" method="post">
       <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
     </form>
