@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-  <form method="post" action="{{ url_for('alerts.update', id=alert['id']) }}>"
+  <form method="post" action="{{ url_for('alerts.update', id=alert['id']) }}"
     <label for="title">Title</label>
     <input name="title" id="title"
       value="{{ alert['title'] }}" required>
@@ -13,8 +13,8 @@
     <textarea name="message" id="message">{{ alert['message'] }}</textarea>
     <label for="email">Email</label>
     <input name="email" id="email" value="{{ alert['email'] }}" required>
-    <label for="alert-date">Notification Date:</label>
-    <input type="datetime-local" id="alert-date" name="alert-date" value="{{ alert['schedule'] }}">
+    <label for="schedule">Notification Date:</label>
+    <input type="datetime-local" id="schedule" name="schedule" value="{{ alert['schedule'] }}">
     <input type="submit" value="Save">
   </form>
   <hr>
