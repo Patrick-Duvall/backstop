@@ -44,7 +44,7 @@ def create():
         return redirect(url_for('alerts.index'))
 
 
-@bp.route('/')
+@bp.route('')
 @login_required
 def index():
     db = get_db()
