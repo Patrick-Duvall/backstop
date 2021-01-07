@@ -3,6 +3,8 @@ import os
 from flask import Flask, render_template
 from flaskr.forms import AlertForm
 
+# import pdb; pdb.set_trace()
+
 
 def create_app(test_config=None):
     # create and configure the app
