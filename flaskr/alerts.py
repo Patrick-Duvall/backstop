@@ -22,7 +22,7 @@ def create():
     email = request.form['email']
     title = request.form['title']
     message = request.form['message']
-    schedule = request.form['alert-date']
+    schedule = request.form['schedule']
     error = None
 
     if not email:
@@ -82,7 +82,8 @@ def edit(id):
 @bp.route('/<int:id>/update', methods=['POST'])
 @login_required
 def update(id):
-
+    get_alert(id)
+    
     title = request.form['title']
     message = request.form['message']
     email = request.form['email']
