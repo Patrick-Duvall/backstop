@@ -49,7 +49,7 @@ def test_create(client, auth, app):
     auth.login()
     client.post('/alerts/create',
                 data={'title': 'test',
-
+                      'message': 'test',
                       'email': 'test@',
                       'schedule': '2020-01-01 00:00:01'}
                 )
