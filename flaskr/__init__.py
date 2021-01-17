@@ -45,4 +45,4 @@ def create_app(test_config=None):
     from . import alerts
     app.register_blueprint(alerts.bp, url_prefix="/alerts")
 
-    return app
+    return application
