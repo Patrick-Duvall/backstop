@@ -1,4 +1,3 @@
-from flask_wtf import FlaskForm
 import datetime
 from wtforms import StringField, SubmitField, TextAreaField, DateTimeField
 
