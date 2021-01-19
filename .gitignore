@@ -1,4 +1,5 @@
-
+# Python environment
+.virt/*
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
