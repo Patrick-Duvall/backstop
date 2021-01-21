@@ -10,6 +10,14 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from oauthlib.oauth2 import WebApplicationClient
 import requests
 
+from flask_login import (
+    LoginManager,
+    current_user,
+    login_required,
+    login_user,
+    logout_user,
+)
+
 from flaskr.db import get_db
 
 # Configuration
@@ -114,9 +122,22 @@ def callback():
         unique_id = userinfo_response.json()["sub"]
         users_email = userinfo_response.json()["email"]
         picture = userinfo_response.json()["picture"]
-        users_name = userinfo_response.json()["given_name"]
+        username = userinfo_response.json()["given_name"]
     else:
         return "User email not available or not verified by Google.", 400
+
+    db = get_db()
+    db.execute(
+        'INSERT INTO user (username, password) VALUES (?, ?)',
+        (username, generate_password_hash('test'))
+    )
+    db.commit()
+
+    user = db.execute(
+        'SELECT * FROM user WHERE username = ?', (username,)
+    ).fetchone()
+
+    session['user_id'] = user['id']
 
     return redirect(url_for('alerts.index'))
 
