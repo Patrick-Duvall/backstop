@@ -10,12 +10,20 @@ from flask_login import (
     logout_user,
 )
 
+from flaskr.user import User
+
 
 def create_app(test_config=None):
     # create and configure the app
     application = Flask(__name__, instance_relative_config=True)
     login_manager = LoginManager()
     login_manager.init_app(application)
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.get(user_id)
+
+
     application.config.from_mapping(
         SECRET_KEY='dev',
         DATABASE=os.path.join(application.instance_path, 'flaskr.sqlite'),
