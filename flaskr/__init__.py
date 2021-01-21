@@ -2,10 +2,20 @@ import os
 
 from flask import Flask, render_template
 
+from flask_login import (
+    LoginManager,
+    current_user,
+    login_required,
+    login_user,
+    logout_user,
+)
+
 
 def create_app(test_config=None):
     # create and configure the app
     application = Flask(__name__, instance_relative_config=True)
+    login_manager = LoginManager()
+    login_manager.init_app(application)
     application.config.from_mapping(
         SECRET_KEY='dev',
         DATABASE=os.path.join(application.instance_path, 'flaskr.sqlite'),
@@ -23,11 +33,6 @@ def create_app(test_config=None):
         os.makedirs(application.instance_path)
     except OSError:
         pass
-
-    # a simple page that says hello
-    @application.route('/hello')
-    def hello():
-        return 'Hello, World!'
 
     from . import db
     db.init_app(application)

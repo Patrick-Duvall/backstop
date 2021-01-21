@@ -1,6 +1,6 @@
 # Python environment
 .virt/*
-*.pyc
+*/.__pyc
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml

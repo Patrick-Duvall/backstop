@@ -49,7 +49,7 @@ def index():
     db = get_db()
     user_id = session['user_id']
     alerts = db.execute(
-        'SELECT a.id, title, schedule, email'
+        'SELECT a.id, title, schedule, a.email'
         ' FROM alert a JOIN user u ON a.author_id = u.id'
         f" WHERE a.author_id = {user_id}"
         ' ORDER BY created DESC'

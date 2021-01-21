@@ -19,6 +19,7 @@ from flask_login import (
 )
 
 from flaskr.db import get_db
+from flaskr.user import User
 
 # Configuration
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_OAUTH_TEST_CLIENT", None)
@@ -31,6 +32,11 @@ GOOGLE_DISCOVERY_URL = (
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
+
+# # User session management setup
+# # https://flask-login.readthedocs.io/en/latest
+# login_manager = LoginManager()
+# login_manager.init_app(app)
 
 
 def get_google_provider_cfg():
@@ -121,23 +127,18 @@ def callback():
     if userinfo_response.json().get("email_verified"):
         unique_id = userinfo_response.json()["sub"]
         users_email = userinfo_response.json()["email"]
-        picture = userinfo_response.json()["picture"]
         username = userinfo_response.json()["given_name"]
     else:
         return "User email not available or not verified by Google.", 400
 
-    db = get_db()
-    db.execute(
-        'INSERT INTO user (username, password) VALUES (?, ?)',
-        (username, generate_password_hash('test'))
+      # Create a user in your db with the information provided by Google
+    user = User(
+        id_=unique_id, username=username, email=users_email
     )
-    db.commit()
-
-    user = db.execute(
-        'SELECT * FROM user WHERE username = ?', (username,)
-    ).fetchone()
-
-    session['user_id'] = user['id']
+    # Doesn't exist? Add it to the database.
+    if not User.get(unique_id):
+        User.create(unique_id, username, users_email)
+    login_user(user)
 
     return redirect(url_for('alerts.index'))
 
