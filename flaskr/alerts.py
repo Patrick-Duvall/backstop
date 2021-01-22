@@ -82,6 +82,8 @@ def edit(id):
 @login_required
 def update(id):
 
+    get_alert(id)
+
     title = request.form['title']
     message = request.form['message']
     email = request.form['email']
