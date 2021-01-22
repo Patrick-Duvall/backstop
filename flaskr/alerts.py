@@ -3,7 +3,13 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 
-from flaskr.auth import login_required
+from flask_login import (
+    LoginManager,
+    current_user,
+    login_required,
+    login_user,
+    logout_user,
+)
 from flaskr.db import get_db
 
 bp = Blueprint('alerts', __name__)

@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for
 
 from flask_login import (
     LoginManager,
@@ -16,7 +16,10 @@ from flaskr.user import User
 def create_app(test_config=None):
     # create and configure the app
     application = Flask(__name__, instance_relative_config=True)
+
+    # configure the login manager
     login_manager = LoginManager()
+    login_manager.login_view = '/'
     login_manager.init_app(application)
 
     @login_manager.user_loader
