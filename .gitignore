@@ -1,5 +1,7 @@
 # Python environment
 .virt/*
+.*/__pycache__/*
+.flaskr.egg-info/*
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
