@@ -40,6 +40,30 @@ def test_resource_exists_get(client, auth):
     assert client.get('alerts/2/edit').status_code == 404
 
 
+@pytest.mark.parametrize('path', (
+    '/alerts/create',
+    '/alerts/1/update',
+    '/alerts/1/delete',
+))
+def test_login_required(client, path):
+    response = client.post(path)
+    assert response.headers['Location'] == 'http://localhost/auth/login'
+
+
+@pytest.mark.parametrize('path', (
+    '/alerts/2/update',
+    '/alerts/2/delete',
+))
+def test_resource_exists_post(client, auth, path):
+    auth.login()
+    assert client.post(path).status_code == 404
+
+
+def test_resource_exists_get(client, auth):
+    auth.login()
+    assert client.get('alerts/2/edit').status_code == 404
+
+
 def test_index(client, auth):
     response = client.get('/alerts')
     assert response.status_code == 401
@@ -72,7 +96,6 @@ def test_create(client, auth, app):
 def test_edit(client, auth, app):
     with app.test_request_context():
         login_user(User.get('abc123'))
-        # import pdb; pdb.set_trace()
         assert client.get('alerts/1/edit').status_code == 200
 
 
