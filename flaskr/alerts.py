@@ -87,7 +87,6 @@ def edit(id):
 @bp.route('/<int:id>/update', methods=['POST'])
 @login_required
 def update(id):
-
     get_alert(id)
 
     title = request.form['title']
