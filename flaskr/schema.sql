@@ -25,6 +25,6 @@ CREATE TABLE alert (
   title  TEXT NOT NULL,
   message TEXT NOT NULL,
   schedule DATETIME NOT NULL,
-  sent BOOLEAN DEFAULT FALSE
+  sent BOOLEAN DEFAULT FALSE,
   FOREIGN KEY (author_id) REFERENCES user (id)
 );

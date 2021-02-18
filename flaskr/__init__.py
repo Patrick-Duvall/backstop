@@ -65,9 +65,8 @@ def create_app(test_config=None):
     mail = Mail(application)
     application.config['MAIL_SERVER'] = 'smtp.gmail.com'
     application.config['MAIL_PORT'] = 465
-    # import pdb; pdb.set_trace()
-    application.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
-    application.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+    application.config['MAIL_USERNAME'] = 'backstopapp@gmail.com'
+    application.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
     application.config['MAIL_USE_TLS'] = False
     application.config['MAIL_USE_SSL'] = True
     mail = Mail(application)
@@ -83,17 +82,20 @@ def create_app(test_config=None):
             ).fetchall()
 
             for alert in alerts:
+                print(alert)
                 msg = Message(alert['title'], sender='backStopApp@gmail.com',
                             recipients=[alert['email']])
                 msg.body = alert['message']
                 mail.send(msg)
+                database = db.get_db()
                 database.execute(
                     f"UPDATE alert set sent = true WHERE id = {alert['id']}"
                 )
+                database.commit()
                 return "Sent"
 
     scheduler = BackgroundScheduler()
-    scheduler.add_job(send_overdue_emails, 'cron', minute='*/1')
+    scheduler.add_job(send_overdue_emails, 'cron', second='30')
     scheduler.start()
 
     return application
