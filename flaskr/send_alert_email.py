@@ -4,7 +4,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask
 from flask_mail import Mail, Message
 from datetime import datetime
-# from flaskr.db import get_db
 from flask import current_app
 import logging
 

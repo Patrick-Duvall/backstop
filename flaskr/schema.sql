@@ -3,9 +3,9 @@ DROP TABLE IF EXISTS post;
 DROP TABLE IF EXISTS alert;
 
 CREATE TABLE user (
-  id INTEGER PRIMARY KEY,
-  username TEXT UNIQUE NOT NULL,
-  password TEXT NOT NULL
+  id TEXT PRIMARY KEY,
+  username TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL
 );
 
 CREATE TABLE post (
@@ -25,6 +25,6 @@ CREATE TABLE alert (
   title  TEXT NOT NULL,
   message TEXT NOT NULL,
   schedule DATETIME NOT NULL,
-  sent BOOLEAN DEFAULT FALSE
+  sent BOOLEAN DEFAULT FALSE,
   FOREIGN KEY (author_id) REFERENCES user (id)
 );

@@ -5,6 +5,40 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for, session
 )
 
+from flask_login import (
+    LoginManager,
+    current_user,
+    login_required,
+    login_user,
+    logout_user,
+)
+
+from flaskr.user import User
+
+
+@pytest.mark.parametrize('path', (
+    '/alerts/create',
+    '/alerts/1/update',
+    '/alerts/1/delete',
+))
+def test_login_required(client, path):
+    response = client.post(path)
+    assert response.headers['Location'] == 'http://localhost/auth/login'
+
+
+@pytest.mark.parametrize('path', (
+    '/alerts/2/update',
+    '/alerts/2/delete',
+))
+def test_resource_exists_post(client, auth, path):
+    session['user_id'] = 'abc123'
+    assert client.post(path).status_code == 404
+
+
+def test_resource_exists_get(client, auth):
+    auth.login()
+    assert client.get('alerts/2/edit').status_code == 404
+
 
 @pytest.mark.parametrize('path', (
     '/alerts/create',
@@ -32,8 +66,8 @@ def test_resource_exists_get(client, auth):
 
 def test_index(client, auth):
     response = client.get('/alerts')
-    assert response.status_code == 302
-    assert b"<title>Redirecting" in response.data
+    assert response.status_code == 401
+    assert b"<title>401 Unauthorized</title>" in response.data
 
     auth.login()
     response = client.get('/alerts')
@@ -46,12 +80,11 @@ def test_index(client, auth):
 
 
 def test_create(client, auth, app):
-    auth.login()
     client.post('/alerts/create',
                 data={'title': 'test',
                       'message': 'test',
                       'email': 'test@',
-                      'alert-date': '2020-01-01 00:00:01'}
+                      'schedule': '2020-01-01 00:00:01'}
                 )
 
     with app.app_context():
@@ -60,15 +93,14 @@ def test_create(client, auth, app):
         assert count == 2
 
 
-def test_edit(client, auth):
-    auth.login()
-    assert client.get('alerts/1/edit').status_code == 200
+def test_edit(client, auth, app):
+    with app.test_request_context():
+        login_user(User.get('abc123'))
+        assert client.get('alerts/1/edit').status_code == 200
 
 
 def test_update(client, auth, app):
     auth.login()
-    # time = datetime.datetime.now()
-    # post_time = time.strftime
     client.post('alerts/1/update', data={
         'title': 'updated',
         'message': 'updated',

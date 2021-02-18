@@ -3,7 +3,13 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 
-from flaskr.auth import login_required
+from flask_login import (
+    LoginManager,
+    current_user,
+    login_required,
+    login_user,
+    logout_user,
+)
 from flaskr.db import get_db
 
 bp = Blueprint('alerts', __name__)
@@ -49,7 +55,7 @@ def index():
     db = get_db()
     user_id = session['user_id']
     alerts = db.execute(
-        'SELECT a.id, title, schedule, email'
+        'SELECT a.id, title, schedule, a.email'
         ' FROM alert a JOIN user u ON a.author_id = u.id'
         f" WHERE a.author_id = {user_id}"
         ' ORDER BY created DESC'
