@@ -9,6 +9,15 @@ class User(UserMixin):
         self.username = username
         self.email = email
 
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
     @staticmethod
     def get(user_id):
         db = get_db()

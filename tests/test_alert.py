@@ -13,6 +13,8 @@ from flask_login import (
     login_user,
     logout_user,
 )
+#  with client.session_transaction() as session:
+#      session['user_id'] = 'abc123' Stubs user login with google oauth
 
 from flaskr.user import User
 
@@ -38,7 +40,8 @@ def test_resource_exists_post(client, auth, path):
 
 
 def test_resource_exists_get(client, auth):
-    # auth.login()
+    with client.session_transaction() as session:
+        session['user_id'] = 'abc123'
     assert client.get('alerts/2/edit').status_code == 404
 
 
@@ -47,15 +50,17 @@ def test_resource_exists_get(client, auth):
     '/alerts/2/delete',
 ))
 def test_resource_exists_post(client, auth, path):
-    # auth.login()
+    with client.session_transaction() as session:
+        session['user_id'] = 'abc123'
     assert client.post(path).status_code == 404
 
 def test_index(client, auth):
-    response = client.get('/alerts')
-    assert response.status_code == 401
-    assert b"<title>401 Unauthorized</title>" in response.data
+    response = client.get('/alerts', follow_redirects=True)
+    assert response.status_code == 200
+    assert b"<div class=\"flash\">Please log in to access this page.</div>" in response.data
 
-    auth.login()
+    with client.session_transaction() as session:
+        session['user_id'] = 'abc123'
     response = client.get('/alerts')
     assert b'Log Out' in response.data
     assert b'My Alerts' in response.data
@@ -66,12 +71,18 @@ def test_index(client, auth):
 
 
 def test_create(client, auth, app):
-    client.post('/alerts/create',
-                data={'title': 'test',
-                      'message': 'test',
-                      'email': 'test@',
-                      'schedule': '2020-01-01 00:00:01'}
-                )
+    with app.test_request_context():
+        with client.session_transaction() as session:
+            session['user_id'] = 'abc123'
+        response = client.post('/alerts/create',
+            data={'title': 'test1',
+                    'message': 'test1',
+                    'email': 'test1@test.com',
+                    'alert-date': '2020-01-01 00:00:01'},
+            follow_redirects=True
+            )
+        assert response.status_code == 200
+        assert b'<title>My Alerts - Flaskr' in response.data
 
     with app.app_context():
         db = get_db()
@@ -81,18 +92,21 @@ def test_create(client, auth, app):
 
 def test_edit(client, auth, app):
     with app.test_request_context():
-        login_user(User.get('abc123'))
+        with client.session_transaction() as session:
+            session['user_id'] = 'abc123'
         assert client.get('alerts/1/edit').status_code == 200
 
 
 def test_update(client, auth, app):
-    auth.login()
-    client.post('alerts/1/update', data={
-        'title': 'updated',
-        'message': 'updated',
-        'email': 'updated',
-        'schedule': '2020-01-01 00:00:02'
-    })
+    with app.test_request_context():
+        with client.session_transaction() as session:
+            session['user_id'] = 'abc123'
+        client.post('alerts/1/update', data={
+            'title': 'updated',
+            'message': 'updated',
+            'email': 'updated',
+            'schedule': '2020-01-01 00:00:02'
+        })
 
     with app.app_context():
         db = get_db()
@@ -104,12 +118,12 @@ def test_update(client, auth, app):
 
 
 def test_delete(client, auth, app):
-    auth.login()
-    response = client.post('alerts/1/delete')
-    # import pdb; pdb.set_trace()
-    # assert response.headers['Location'] == 'http://localhost/alerts'
-    assert response.status_code == 302
-    assert urlparse(response.location) == '/alerts'
+    with app.test_request_context():
+        with client.session_transaction() as session:
+            session['user_id'] = 'abc123'
+        response = client.post('alerts/1/delete', follow_redirects=True)
+        assert response.status_code == 200
+        assert b'<title>My Alerts - Flaskr' in response.data
 
     with app.app_context():
         db = get_db()
