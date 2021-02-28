@@ -31,7 +31,7 @@ def create():
     error = None
 
     if not email:
-        error = 'Title is required.'
+        error = 'Email is required.'
 
     if not message:
         error = 'Message is required.'
@@ -57,7 +57,7 @@ def index():
     alerts = db.execute(
         'SELECT a.id, title, schedule, a.email'
         ' FROM alert a JOIN user u ON a.author_id = u.id'
-        f" WHERE a.author_id = {user_id}"
+        f" WHERE a.author_id = '{user_id}'"
         ' ORDER BY created DESC'
     ).fetchall()
     return render_template('alert/index.html', alerts=alerts)
@@ -87,7 +87,6 @@ def edit(id):
 @bp.route('/<int:id>/update', methods=['POST'])
 @login_required
 def update(id):
-
     get_alert(id)
 
     title = request.form['title']

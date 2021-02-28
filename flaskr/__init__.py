@@ -82,7 +82,6 @@ def create_app(test_config=None):
             ).fetchall()
 
             for alert in alerts:
-                print(alert)
                 msg = Message(alert['title'], sender='backStopApp@gmail.com',
                             recipients=[alert['email']])
                 msg.body = alert['message']
