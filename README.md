@@ -10,3 +10,4 @@ I do a lot of hiking and I like to go light. I generally don't take a gps or pho
 
 - SQLite is inappropriate for a production database as it uses in memory storage. For this reason it will NOT work on heroku, it will work on AWS BUT will incur monthly charges
 - Some sort of DB migration system is necessary to maintain a database across multiple platforms i.e. dev and production. Without this one will have to maintain databses by hand with raw SQL queries which is tedious and error prone.
+- ORM's have major upsides I am used to enjoying having worked primarily in rails
