@@ -1,7 +1,7 @@
 
 import pytest
-from flaskr.db import get_db
-from flaskr import create_app
+from app.db import get_db
+from app import create_app
 from apscheduler.schedulers.background import BackgroundScheduler
 
 # def test_send_overdue_emails(app):

@@ -18,8 +18,8 @@ from flask_login import (
     logout_user,
 )
 
-from flaskr.db import get_db
-from flaskr.user import User
+from app.db import get_db
+from app.user import User
 
 # Configuration
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_OAUTH_TEST_CLIENT", None)

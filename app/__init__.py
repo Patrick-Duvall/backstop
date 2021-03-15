@@ -15,7 +15,7 @@ from flask_login import (
     logout_user,
 )
 
-from flaskr.user import User
+from app.user import User
 
 
 def create_app(test_config=None):
@@ -33,7 +33,7 @@ def create_app(test_config=None):
 
     application.config.from_mapping(
         SECRET_KEY='dev',
-        DATABASE=os.path.join(application.instance_path, 'flaskr.sqlite'),
+        DATABASE=os.path.join(application.instance_path, 'app.sqlite'),
     )
 
     if test_config is None:  # load the instance config, if it exists, when not testing

@@ -10,7 +10,7 @@ from flask_login import (
     login_user,
     logout_user,
 )
-from flaskr.db import get_db
+from app.db import get_db
 
 bp = Blueprint('alerts', __name__)
 

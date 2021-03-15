@@ -1,7 +1,7 @@
 import pytest
 from urllib.parse import urlparse
 import datetime
-from flaskr.db import get_db
+from app.db import get_db
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for, session
 )
@@ -16,7 +16,7 @@ from flask_login import (
 #  with client.session_transaction() as session:
 #      session['user_id'] = 'abc123' Stubs user login with google oauth
 
-from flaskr.user import User
+from app.user import User
 
 
 @pytest.mark.parametrize('path', (
@@ -82,7 +82,7 @@ def test_create(client, auth, app):
             follow_redirects=True
             )
         assert response.status_code == 200
-        assert b'<title>My Alerts - Flaskr' in response.data
+        assert b'<title>My Alerts - app' in response.data
 
     with app.app_context():
         db = get_db()
@@ -123,7 +123,7 @@ def test_delete(client, auth, app):
             session['user_id'] = 'abc123'
         response = client.post('alerts/1/delete', follow_redirects=True)
         assert response.status_code == 200
-        assert b'<title>My Alerts - Flaskr' in response.data
+        assert b'<title>My Alerts - app' in response.data
 
     with app.app_context():
         db = get_db()

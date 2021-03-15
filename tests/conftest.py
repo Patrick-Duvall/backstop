@@ -2,8 +2,8 @@ import os
 import tempfile
 
 import pytest
-from flaskr import create_app
-from flaskr.db import get_db, init_db
+from app import create_app
+from app.db import get_db, init_db
 
 from flask_login import (
     LoginManager,
@@ -13,7 +13,7 @@ from flask_login import (
     logout_user,
 )
 
-from flaskr.user import User
+from app.user import User
 
 with open(os.path.join(os.path.dirname(__file__), 'data.sql'), 'rb') as f:
     _data_sql = f.read().decode('utf8')

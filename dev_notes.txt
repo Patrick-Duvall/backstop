@@ -1,0 +1,17 @@
+create virtual ENV python3 -m venv tutorial-env
+
+ENTER VIRTUAL ENV: source tutorial-env/bin/activate
+
+EXIT VIRTUAL ENV: deactivate
+
+Run pytest in Backstop App
+python -m pytest 
+
+start backstop App
+export FLASK_APP=flaskr
+export FLASK_ENV=development
+
+Open database from sqlite
+
+sqlite3
+.open flaskr/schema.sql
