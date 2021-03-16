@@ -2,6 +2,8 @@
 
 Backstop is an emergency contact notification built in Python Using [Flask](https://flask.palletsprojects.com/en/1.1.x/). Users can Authenticate with their Google account then create emergency alerts which are sent to a specified contact if a certain time stamp is passed. These emails are sent using [FlaskMail](https://pythonhosted.org/Flask-Mail/) and [AdvancedPythonScheduler](https://apscheduler.readthedocs.io/en/stable/)
 
+Currently works locally BUT is not deployable on heroku due to being built with a SQLite database(I did deploy on AWS and incurred monthly data charges, I think due to maintaining the in memory db). I'm working on changing to an ORM and Migration manager in the branch setup-postgres
+
 ## Why Backstop
 
 I do a lot of hiking and I like to go light. I generally don't take a gps or phone and pack light on food too. One thing I do take however, is a jar of peanut butter as a caloric 'backstop'. If I run out of food, I won't go hungry. I created this application as a simple way for people to create emergency alerts to send to an emergency contact if they didn't return from a trip. I had never used Python or Flask before and started by following the Flask Tutorial to build a blog application. I then modeled my routes and tests off of this pattern before removing the original blog functionality and adding the mailer and scheduler functionality.
