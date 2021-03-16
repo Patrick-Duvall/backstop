@@ -14,4 +14,4 @@ export FLASK_ENV=development
 Open database from sqlite
 
 sqlite3
-.open flaskr/schema.sql
+.open app/db

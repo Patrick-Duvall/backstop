@@ -1,81 +1,67 @@
 import logging
+import os
 from datetime import datetime
 from flask import Flask
 from flask_mail import Mail, Message
 from apscheduler.schedulers.background import BackgroundScheduler
-import os
+from flask_login import LoginManager
+from config import Config
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
-from flask import Flask, render_template, url_for
+login_manager = LoginManager()
+login_manager.login_view = '/'
+db = SQLAlchemy()
+migrate = Migrate()
 
-from flask_login import (
-    LoginManager,
-    current_user,
-    login_required,
-    login_user,
-    logout_user,
-)
-
-from app.user import User
-
-
-def create_app(test_config=None):
-    application = Flask(__name__, instance_relative_config=True)
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(config_class)
 
     # configure the login manager
-    login_manager = LoginManager()
-    login_manager.login_view = '/'
-    login_manager.init_app(application)
+    db.init_app(app)
+    migrate.init_app(app, db)
+    from app import models
 
+    login_manager.init_app(app)
     @login_manager.user_loader
     def load_user(user_id):
         return User.get(user_id)
 
+    # if test_config is None:  # load the instance config, if it exists, when not testing
+    #     app.config.from_pyfile('config.py', silent=True)
+    # else:  # load the test config if passed in
+    #     app.config.from_mapping(test_config)
 
-    application.config.from_mapping(
-        SECRET_KEY='dev',
-        DATABASE=os.path.join(application.instance_path, 'app.sqlite'),
-    )
-
-    if test_config is None:  # load the instance config, if it exists, when not testing
-        application.config.from_pyfile('config.py', silent=True)
-    else:  # load the test config if passed in
-        application.config.from_mapping(test_config)
-
-    try:  # ensure the instance folder exists
-        os.makedirs(application.instance_path)
-    except OSError:
-        pass
-
-    from . import db
-    db.init_app(application)
+    # try:  # ensure the instance folder exists
+    #     os.makedirs(app.instance_path)
+    # except OSError:
+    #     pass
 
     from . import auth
-    application.register_blueprint(auth.bp)
+    app.register_blueprint(auth.bp)
 
-    from . import blog
-    application.register_blueprint(blog.bp)
-    application.add_url_rule('/', endpoint='index')
+    app.add_url_rule('/', endpoint='index')
 
     from . import alerts
-    application.register_blueprint(alerts.bp, url_prefix="/alerts")
+    app.register_blueprint(alerts.bp, url_prefix="/alerts")
 
     logging.basicConfig()
-    logging.getLogger('apscheduler').setLevel(logging.DEBUG)
+    # logging.getLogger('apscheduler').setLevel(logging.DEBUG)
 
-    mail = Mail(application)
-    application.config['MAIL_SERVER'] = 'smtp.gmail.com'
-    application.config['MAIL_PORT'] = 465
-    application.config['MAIL_USERNAME'] = 'backstopapp@gmail.com'
-    application.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-    application.config['MAIL_USE_TLS'] = False
-    application.config['MAIL_USE_SSL'] = True
-    mail = Mail(application)
+    mail = Mail(app)
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 465
+    app.config['MAIL_USERNAME'] = 'backstopapp@gmail.com'
+    app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+    app.config['MAIL_USE_TLS'] = False
+    app.config['MAIL_USE_SSL'] = True
+    mail = Mail(app)
 
     def send_overdue_emails():
-        with application.app_context():
+        with app.app_context():
             now = datetime.now()
-            database = db.get_db()
-            alerts = database.execute(
+            alerts = db.execute(
                 'SELECT id, title, schedule, email, message, sent'
                 ' FROM alert'
                 f" WHERE schedule < '{now}' AND sent = false"
@@ -86,18 +72,14 @@ def create_app(test_config=None):
                             recipients=[alert['email']])
                 msg.body = alert['message']
                 mail.send(msg)
-                database = db.get_db()
-                database.execute(
+                db.execute(
                     f"UPDATE alert set sent = true WHERE id = {alert['id']}"
                 )
-                database.commit()
+                db.commit()
                 return "Sent"
 
     scheduler = BackgroundScheduler()
     scheduler.add_job(send_overdue_emails, 'cron', second='30')
     scheduler.start()
 
-    return application
-
-
-
+    return app
